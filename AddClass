@@ -1,0 +1,113 @@
+package com.noticulator.classes;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+public class AddClass extends Dialog {
+
+	protected Object result;
+	protected Shell shlAddClass;
+	private Button btnAddClass;
+	private Text text;
+
+	public AddClass(Shell parent, int style) {
+		super(parent, style);
+		setText("SWT Dialog");
+		open();
+	}
+
+	public Object open() {
+		createContents();
+		shlAddClass.open();
+		shlAddClass.layout();
+		Display display = getParent().getDisplay();
+		while (!shlAddClass.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+
+	private void createContents() {
+		shlAddClass = new Shell(getParent(), SWT.DIALOG_TRIM);
+		shlAddClass.setSize(300, 90);
+		shlAddClass.setText("Add Class");
+		shlAddClass.setLayout(new FormLayout());
+		
+		Label lblClass = new Label(shlAddClass, SWT.NONE);
+		lblClass.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
+		FormData fd_lblClass = new FormData();
+		fd_lblClass.left = new FormAttachment(0, 20);
+		fd_lblClass.top = new FormAttachment(0, 10);
+		lblClass.setLayoutData(fd_lblClass);
+		lblClass.setText("Class");
+		
+		Composite composite = new Composite(shlAddClass, SWT.BORDER | SWT.EMBEDDED);
+		GridLayout gl_composite = new GridLayout(2, false);
+		gl_composite.marginTop = 6;
+		composite.setLayout(gl_composite);
+		FormData fd_composite = new FormData();
+		fd_composite.bottom = new FormAttachment(100, -10);
+		fd_composite.right = new FormAttachment(100, -10);
+		fd_composite.top = new FormAttachment(0, 17);
+		fd_composite.left = new FormAttachment(0, 10);
+		composite.setLayoutData(fd_composite);
+		
+		text = new Text(composite, SWT.BORDER);
+		text.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN) {
+					if (text.getText().isEmpty()) {
+						
+					} else {
+						TableItem item = new TableItem(ClassListDialog.table, SWT.NONE);
+						item.setText(text.getText());
+						ClassListDialog.classes.add(text.getText());
+						ClassListDialog.newClasses.add(text.getText());
+						ClassListDialog.mntmChangeClassOrder.setEnabled(true);
+						shlAddClass.dispose();
+					}
+				}
+			}
+		});
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		
+		btnAddClass = new Button(composite, SWT.FLAT);
+		btnAddClass.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (text.getText().isEmpty()) {
+					
+				} else {
+					TableItem item = new TableItem(ClassListDialog.table, SWT.NONE);
+					item.setText(text.getText());
+					ClassListDialog.classes.add(text.getText());
+					ClassListDialog.newClasses.add(text.getText());
+					ClassListDialog.mntmChangeClassOrder.setEnabled(true);
+					shlAddClass.dispose();
+				}
+			}
+		});
+		btnAddClass.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+		btnAddClass.setText("Add Class");
+
+	}
+}
